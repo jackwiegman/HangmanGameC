@@ -15,7 +15,8 @@
 #define MAX_GUESSED_LETTERS         /** Max size of array to hold the guessed letters */
 
 /**
- * @brief Array holding pictures of a hangman at various stages to display.
+ * @var const char * HANGMANPICS
+ * Array holding pictures of a hangman at various stages to display.
  */
 const char *HANGMANPICS[(MAX_ERRORS)] = {"\
   +---+ \n\
@@ -68,6 +69,21 @@ const char *HANGMANPICS[(MAX_ERRORS)] = {"\
       |  \n\
 ========= "};
 
+/**
+ * @var const char * FullWordList
+ * List of possible words to choose from, separated by spaces.
+ */
+const char *FullWordList =
+    "ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey "
+    "duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule "
+    "newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark "
+    "sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale "
+    "wolf wombat zebra ";
+
+/**
+ * @var const char * usedLetters
+ * Array to hold the letters that have been guessed previously.
+ */
 const char *usedLetters;
 
 /**
@@ -86,23 +102,18 @@ void runGame() {}
 
 void printCurrentBoard(char *currentBoard, int size) {
     for (int i = 0; i < size; i++) {
+        printf("%s", &currentBoard[i]);
     }
 }
 
+/**
+ * @brief Run the main program.
+ *
+ * @param argc [TODO:parameter]
+ * @param argv [TODO:parameter]
+ * @return [TODO:return]
+ */
 int main(int argc, char *argv[]) {
-    // char wordsList = strtok(char *, const char *);
-
-    // Word bank of animals
-
-    /**
-     * @brief List of possible words to choose from, separated by spaces
-     */
-    char *FullWordList =
-        "ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey "
-        "duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule "
-        "newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark "
-        "sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale "
-        "wolf wombat zebra ";
 
     char *secretWord, *currentBoard;
 
