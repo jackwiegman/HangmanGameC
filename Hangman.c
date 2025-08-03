@@ -12,6 +12,7 @@
 #define INT_SIZE sizeof(int)        /** Size of an int on the computer running the program */
 #define MAX_HANGMAN_STRING_SIZE 100 /** Max string size to be entered by the player */
 #define MAX_ERRORS 7                /** Max error before player loses */
+#define MAX_GUESSED_LETTERS         /** Max size of array to hold the guessed letters */
 
 /**
  * @brief Array holding pictures of a hangman at various stages to display.
@@ -67,14 +68,28 @@ const char *HANGMANPICS[(MAX_ERRORS)] = {"\
       |  \n\
 ========= "};
 
-void printCurrentBoard(char *currentBoard, int size) {
+const char *usedLetters;
 
+/**
+ * @brief Prompt user for a guess and then scan in the letter of the guess while validating input.
+ *
+ * @param[out] guessedLetter The pointer to place the guessed letter.
+ */
+void getLetterGuess(char *guessedLetter) {
+    printf("Please enter a letter to guess: ");
+    while (!(scanf("%c", guessedLetter))) {
+        puts("Error, please enter a singular letter as a guess.");
+    }
+}
+
+void runGame() {}
+
+void printCurrentBoard(char *currentBoard, int size) {
     for (int i = 0; i < size; i++) {
     }
 }
 
 int main(int argc, char *argv[]) {
-
     // char wordsList = strtok(char *, const char *);
 
     // Word bank of animals
@@ -89,15 +104,13 @@ int main(int argc, char *argv[]) {
         "sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale "
         "wolf wombat zebra ";
 
-    char *wordList, *secretWord, *currentBoard;
+    char *secretWord, *currentBoard;
 
     int size = (sizeof(&currentBoard)) / CHAR_SIZE;
 
     for (int i = 0; i < MAX_ERRORS; i++) {
         printf("%s\n", HANGMANPICS[i]);
     }
-
-    // for (int i = 0; i <)
 
     // wordList[numWords] = {"dog", "cat", "wolf", "bear", "tiger", "cheetah", "elephant"};
 
