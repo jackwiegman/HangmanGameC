@@ -8,166 +8,102 @@
 #include <stdlib.h>
 #include <string.h>
 
-// #define EXIT_SUCCESS 1
-#define EXIT_FAIL 
-#define CHAR_SIZE sizeof(char)
-#define INT_SIZE sizeof(int)
-#define MAX_HANGMAN_STRING_SIZE 100
-#define MAX_ERRORS 7
+#define CHAR_SIZE sizeof(char)      /** Size of char on the computer running the program */
+#define INT_SIZE sizeof(int)        /** Size of an int on the computer running the program */
+#define MAX_HANGMAN_STRING_SIZE 100 /** Max string size to be entered by the player */
+#define MAX_ERRORS 7                /** Max error before player loses */
+
+/**
+ * @brief Array holding pictures of a hangman at various stages to display.
+ */
+const char *HANGMANPICS[(MAX_ERRORS)] = {"\
+  +---+ \n\
+  |   | \n\
+      | \n\
+      | \n\
+      | \n\
+      | \n\
+=========", "\
+  +---+ \n\
+  |   | \n\
+  O   | \n\
+      | \n\
+      | \n\
+      | \n\
+=========", "\
+  +---+ \n\
+  |   | \n\
+  O   | \n\
+  |   | \n\
+      | \n\
+      | \n\
+=========", "\
+  +---+ \n\
+  |   | \n\
+  O   | \n\
+ /|   | \n\
+      | \n\
+      | \n\
+=========", "\
+  +---+ \n\
+  |   | \n\
+  O   | \n\
+ /|\\  | \n\
+      | \n\
+      | \n\
+=========", "\
+  +---+ \n\
+  |   | \n\
+  O   | \n\
+ /|\\  | \n\
+ /    | \n\
+      | \n\
+=========", "\
+  +---+ \n\
+  |   | \n\
+  O   |   \n\
+ /|\\  |   \n\
+ / \\  |  \n\
+      |  \n\
+========= "};
 
 void printCurrentBoard(char *currentBoard, int size) {
 
-  for (int i = 0; i < size; i++) {
-  }
+    for (int i = 0; i < size; i++) {
+    }
 }
 
 int main(int argc, char *argv[]) {
 
-const char * HANGMANPICS[(MAX_ERRORS)] = {
-"\
-  +---+ \
-  |   | \
-      | \
-      | \
-      | \
-      | \
-=========", 
+    // char wordsList = strtok(char *, const char *);
 
- "\
-  +---+ \
-  |   | \
-  O   | \
-      | \
-      | \
-      | \
-=========",
-   "\
-  +---+ \
-  |   | \
-  O   | \
-  |   | \
-      | \
-      | \
-=========",
- "\
-  +---+ \
-  |   | \
-  O   | \
- /|   | \
-      | \
-      | \
-=========", 
- "\
-  +---+ \
-  |   | \
-  O   | \
- /|\  | \
-      | \
-      | \
-=========", 
- "\
-  +---+ \
-  |   | \
-  O   | \
- /|\  | \
- /    | \
-      | \
-=========",
+    // Word bank of animals
 
- "\
-  +---+ \
-  |   | \
-  O   |   \
- /|\\  |   \
- / \\  |  \
-      |  \
-========= "
-  wordsList = strtok(char *, const char *);
+    /**
+     * @brief List of possible words to choose from, separated by spaces
+     */
+    char *FullWordList =
+        "ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey "
+        "duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule "
+        "newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark "
+        "sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale "
+        "wolf wombat zebra ";
 
+    char *wordList, *secretWord, *currentBoard;
 
-  // Word bank of animals
-  char * FullWordList = "ant baboon badger bat bear beaver camel cat clam cobra cougar \
-         coyote crow deer dog donkey duck eagle ferret fox frog goat \
-         goose hawk lion lizard llama mole monkey moose mouse mule newt \
-         otter owl panda parrot pigeon python rabbit ram rat raven \
-         rhino salmon seal shark sheep skunk sloth snake spider \
-         stork swan tiger toad trout turkey turtle weasel whale wolf \
-         wombat zebra ";
+    int size = (sizeof(&currentBoard)) / CHAR_SIZE;
 
-  char *wordList, *secretWord, *currentBoard;
+    for (int i = 0; i < MAX_ERRORS; i++) {
+        printf("%s\n", HANGMANPICS[i]);
+    }
 
-  int size = (sizeof(&currentBoard)) / CHAR_SIZE;
+    // for (int i = 0; i <)
 
-  for (int i = 0; i < )
+    // wordList[numWords] = {"dog", "cat", "wolf", "bear", "tiger", "cheetah", "elephant"};
 
-  wordList = {"dog", "cat", "wolf", "bear", "tiger", "cheetah", "elephant"};
+    printCurrentBoard(currentBoard, size);
 
-  printCurrentBoard(char *currentBoard, size);
+    printf("Size of char: ");
 
-  printf("Size of char: ");
-  
-
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
-
-/*
- * HANGMANPICS = ["
- *  +---+
- *  |   |
- *      |
- *      |
- *      |
- *      |
- *=========", "
- *  +---+
- *  |   |
- *  O   |
- *      |
- *      |
- *      |
- *=========", "
- *  +---+
- *  |   |
- *  O   |
- *  |   |
- *      |
- *      |
- *=========", "
- *  +---+
- *  |   |
- *  O   |
- * /|   |
- *      |
- *      |
- *=========", "
- *  +---+
- *  |   |
- *  O   |
- * /|\  |
- *      |
- *      |
- *=========", "
- *  +---+
- *  |   |
- *  O   |
- * /|\  |
- * /    |
- *      |
- *=========", "
- *  +---+
- *  |   |
- *  O   |
- * /|\  |
- * / \  |
- *      |
- *========="]
- *
- *#Word bank of animals
- *words = ('ant baboon badger bat bear beaver camel cat clam cobra cougar '
- *         'coyote crow deer dog donkey duck eagle ferret fox frog goat '
- *         'goose hawk lion lizard llama mole monkey moose mouse mule newt '
- *         'otter owl panda parrot pigeon python rabbit ram rat raven '
- *         'rhino salmon seal shark sheep skunk sloth snake spider '
- *         'stork swan tiger toad trout turkey turtle weasel whale wolf '
- *         'wombat zebra ').split()
- */
