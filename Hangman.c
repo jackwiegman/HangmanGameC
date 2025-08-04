@@ -84,11 +84,6 @@ const char *FullWordList =
     wolf wombat zebra ";
 
 /**
- * @var const char * usedLetters
- * Array to hold the letters that have been guessed previously.
- */
-
-/**
  * @brief Prompt user for a guess and then scan in the letter of the guess while validating input.
  *
  * @param[out] guessedLetter The pointer to place the guessed letter.
@@ -97,7 +92,7 @@ void getLetterGuess(char *guessedLetter) {
 
     printf("Please enter a letter to guess: "); // Prompt for guess
     scanf("%s", guessedLetter);
-    printf("\n%s\n", guessedLetter);
+    printf("\n");
 
     /* Scan and reprompt untill valid input */
     // while (scanErr != 1) {
@@ -107,14 +102,10 @@ void getLetterGuess(char *guessedLetter) {
     // }
 }
 
-void runGame() {}
-
 void printCurrentBoard(char *currentBoard) {
-    int size = strlen(currentBoard) / sizeof(char *);
-    for (int i = 0; i < size; i++) {
-        printf("%s", &currentBoard[i]);
-    }
-    printf("\n");
+    puts("\n=== CURRENT BOARD ===");
+    puts("=====================");
+    printf("%s\n", currentBoard);
 }
 
 // char *getSecretWord(const char *wordList) {
@@ -170,6 +161,15 @@ void printHangmanPictures() {
     }
 }
 
+bool isDuplicateGuess(char *playerGuess, char *pastGuesses) {
+    for (int i = 0; i < strlen(pastGuesses); i++) {
+        if (pastGuesses[i] == *playerGuess) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  * @brief Check the users guess, updating the board and tracking if the game was won.
  *
@@ -179,8 +179,8 @@ void printHangmanPictures() {
  * @param[in] size Number of letters in the secret word & current board
  * @return Value representing weather the game was won during this guess.
  */
-bool checkGuess(char *guessedLetter, char *secretWord, char *currentBoard, int size,
-                bool *gameWon) {
+bool checkGuess(char *guessedLetter, char *secretWord, char *currentBoard, char *pastGuesses,
+                int size, bool *gameWon) {
     *gameWon = true;
     int discoveredLetters = 0;
     for (int i = 0; i < size; i++) {
@@ -191,7 +191,6 @@ bool checkGuess(char *guessedLetter, char *secretWord, char *currentBoard, int s
             discoveredLetters++;
         }
         if (currentBoard[i] == *"_") {
-            puts("Letter not discovered.");
             *gameWon = false;
         }
     }
@@ -207,10 +206,9 @@ bool checkGuess(char *guessedLetter, char *secretWord, char *currentBoard, int s
     return guessIsCorrect;
 }
 
-void printWord(char *word) {
-    int size = strlen(word) * sizeof(char *);
+void printStringWithSpaces(char *word, int size) {
     for (int i = 0; i < size; i++) {
-        printf("%s", &word[i]);
+        printf("%c ", word[i]);
     }
     printf("\n");
 }
@@ -224,53 +222,48 @@ void printWord(char *word) {
  */
 int main(int argc, char *argv[]) {
 
-    // srand(time(NULL)); // Initialize for rand()
-    // //
-    // puts(getSecretWord(FullWordList));
-    //
-
-    // printHangmanPictures();
-
-    char *secretWord = "apple";
-
-    puts("out 1");
+    char *secretWord = "untouchable"; // Har
     int secretWordSize = strlen(secretWord);
-    printf("sec word size: %d\n", secretWordSize);
-
-    char *currentBoard = malloc((sizeof(char *)) * (secretWordSize + 1));
-    puts("out 2");
-
-    char playerGuess;
-
-    puts("out 3");
-    for (int i = 0; i < secretWordSize; i++) {
-        currentBoard[i] = *"_";
-        // strcpy(&currentBoard[i], "_");
-        // currentBoard[i] = strdup(MASKED_CHAR_VALUE);
-    }
 
     int errorCount = 0;
     bool gameWon = false;
     bool maxErrorsReached = false;
     bool guessIsCorrect = false;
     char *usedLetters = malloc(sizeof(char *) * MAX_GUESSED_LETTERS);
+    int usedLetterIndex = 0;
+
+    char *currentBoard = malloc((sizeof(char *)) * (secretWordSize + 1));
+
+    char playerGuess;
+
+    for (int i = 0; i < secretWordSize; i++) {
+        currentBoard[i] = *"_";
+        // strcpy(&currentBoard[i], "_");
+        // currentBoard[i] = strdup(MASKED_CHAR_VALUE);
+    }
+
+    printf("There are %d letters in the secret word.\n", secretWordSize);
+    printCurrentBoard(currentBoard);
 
     while (!gameWon && !maxErrorsReached) {
         getLetterGuess(&playerGuess);
+        while (isDuplicateGuess(&playerGuess, usedLetters)) {
+            printf("The letter '%s' has already been guessed. Try again.\n", &playerGuess);
+            getLetterGuess(&playerGuess);
+        }
 
-        guessIsCorrect =
-            checkGuess(&playerGuess, secretWord, currentBoard, secretWordSize, &gameWon);
+        guessIsCorrect = checkGuess(&playerGuess, secretWord, currentBoard, usedLetters,
+                                    secretWordSize, &gameWon);
         if (!guessIsCorrect) {
-            puts("Wrong guess.");
-
-            usedLetters[errorCount++] = playerGuess;
             errorCount++;
         }
 
+        usedLetters[usedLetterIndex++] = playerGuess;
+
         printf("%s\n", HANGMANPICS[errorCount]);
-        puts("\n=== CURRENT BOARD ===");
-        puts("=====================");
-        printf("%s\n", currentBoard);
+        printCurrentBoard(currentBoard);
+        puts("Letters guessed:");
+        printStringWithSpaces(usedLetters, MAX_GUESSED_LETTERS);
 
         if (errorCount >= MAX_ERRORS) {
             maxErrorsReached = true;
