@@ -13,7 +13,7 @@
 #define CHAR_SIZE sizeof(char)      /** Size of char on the computer running the program */
 #define INT_SIZE sizeof(int)        /** Size of an int on the computer running the program */
 #define MAX_HANGMAN_STRING_SIZE 100 /** Max string size to be entered by the player */
-#define MAX_ERRORS 7                /** Max error before player loses */
+#define MAX_ERRORS 6                /** Max error before player loses */
 #define MAX_GUESSED_LETTERS 26      /** Max size of array to hold the guessed letters */
 
 const char *MASKED_CHAR_VALUE = "_";
@@ -21,7 +21,7 @@ const char *MASKED_CHAR_VALUE = "_";
  * @var const char * HANGMANPICS
  * Array holding pictures of a hangman at various stages to display.
  */
-const char *HANGMANPICS[(MAX_ERRORS)] = {"\
+const char *HANGMANPICS[(MAX_ERRORS + 1)] = {"\
   +---+ \n\
   |   | \n\
       | \n\
@@ -87,7 +87,6 @@ const char *FullWordList =
  * @var const char * usedLetters
  * Array to hold the letters that have been guessed previously.
  */
-const char *usedLetters;
 
 /**
  * @brief Prompt user for a guess and then scan in the letter of the guess while validating input.
@@ -98,6 +97,7 @@ void getLetterGuess(char *guessedLetter) {
 
     printf("Please enter a letter to guess: "); // Prompt for guess
     scanf("%s", guessedLetter);
+    printf("\n%s\n", guessedLetter);
 
     /* Scan and reprompt untill valid input */
     // while (scanErr != 1) {
@@ -175,34 +175,44 @@ void printHangmanPictures() {
  *
  * @param[in] guessedLetter The letter guessed by the user
  * @param[in] secretWord The secret word being guessed
- * @param[in|out] currentBoard Current state of the board
+ * @param[in/out] currentBoard Current state of the board
  * @param[in] size Number of letters in the secret word & current board
  * @return Value representing weather the game was won during this guess.
  */
-bool checkGuess(char guessedLetter, char *secretWord, char *currentBoard, int size, bool gameWon) {
-    gameWon = true;
+bool checkGuess(char *guessedLetter, char *secretWord, char *currentBoard, int size,
+                bool *gameWon) {
+    *gameWon = true;
     int discoveredLetters = 0;
-    puts("Exit 9");
     for (int i = 0; i < size; i++) {
-        if (secretWord[i] == guessedLetter) {
-            currentBoard[i] = guessedLetter;
+        if (secretWord[i] == *guessedLetter) {
+            // if ((strcmp(secretWord[i], guessedLetter)) == 0) {
+
+            currentBoard[i] = *guessedLetter;
             discoveredLetters++;
         }
-        puts("Exit 10");
-        if (strcmp(&currentBoard[i], "_")) {
-            gameWon = false;
+        if (currentBoard[i] == *"_") {
+            puts("Letter not discovered.");
+            *gameWon = false;
         }
     }
 
     bool guessIsCorrect;
     if (discoveredLetters > 0) {
         guessIsCorrect = true;
-        printf("You discovered %d letters!", discoveredLetters);
+        printf("You discovered %d letters!\n", discoveredLetters);
     } else {
         guessIsCorrect = false;
-        printf("The letter '%c' is not in the secret word.", guessedLetter);
+        printf("The letter '%c' is not in the secret word.\n", *guessedLetter);
     }
     return guessIsCorrect;
+}
+
+void printWord(char *word) {
+    int size = strlen(word) * sizeof(char *);
+    for (int i = 0; i < size; i++) {
+        printf("%s", &word[i]);
+    }
+    printf("\n");
 }
 
 /**
@@ -219,52 +229,62 @@ int main(int argc, char *argv[]) {
     // puts(getSecretWord(FullWordList));
     //
 
-    printHangmanPictures();
+    // printHangmanPictures();
 
-    char *secretWord = "apricot";
-    puts("exit 1");
+    char *secretWord = "apple";
 
+    puts("out 1");
     int secretWordSize = strlen(secretWord);
     printf("sec word size: %d\n", secretWordSize);
-    puts("exit 2");
 
-    char *currentBoard[secretWordSize];
-    puts("exit 3");
+    char *currentBoard = malloc((sizeof(char *)) * (secretWordSize + 1));
+    puts("out 2");
 
     char playerGuess;
 
-    puts("exit 2");
+    puts("out 3");
     for (int i = 0; i < secretWordSize; i++) {
-        currentBoard[i] = strdup(MASKED_CHAR_VALUE);
-        // strcpy(currentBoard[i], MASKED_CHAR_VALUE);
+        currentBoard[i] = *"_";
+        // strcpy(&currentBoard[i], "_");
+        // currentBoard[i] = strdup(MASKED_CHAR_VALUE);
     }
 
     int errorCount = 0;
     bool gameWon = false;
     bool maxErrorsReached = false;
-    bool guessIsCorrect;
+    bool guessIsCorrect = false;
+    char *usedLetters = malloc(sizeof(char *) * MAX_GUESSED_LETTERS);
 
     while (!gameWon && !maxErrorsReached) {
-
-        puts("exit 7");
         getLetterGuess(&playerGuess);
-        puts("exit 8");
 
         guessIsCorrect =
-            checkGuess(playerGuess, secretWord, *currentBoard, secretWordSize, gameWon);
+            checkGuess(&playerGuess, secretWord, currentBoard, secretWordSize, &gameWon);
         if (!guessIsCorrect) {
+            puts("Wrong guess.");
+
+            usedLetters[errorCount++] = playerGuess;
             errorCount++;
         }
 
         printf("%s\n", HANGMANPICS[errorCount]);
+        puts("\n=== CURRENT BOARD ===");
         puts("=====================");
-        puts("=== CURRENT BOARD ===");
-        puts("=====================");
-        printf("%s\n", *currentBoard);
+        printf("%s\n", currentBoard);
 
         if (errorCount >= MAX_ERRORS) {
             maxErrorsReached = true;
         }
+    }
+
+    if (errorCount >= MAX_ERRORS) {
+        puts("You lost.");
+        printf("The secret word was: %s\n", secretWord);
+        puts("Better luck next time!");
+    } else if (gameWon) {
+        printf("Congratulations! You guessed the secret word: %s\n", secretWord);
+    } else {
+        perror("Something went wrong.");
     }
 
     return 0;
